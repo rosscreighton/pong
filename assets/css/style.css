@@ -1,0 +1,29 @@
+html{-webkit-user-select: none;}
+
+body{overflow: hidden;}
+
+canvas{
+    border: 1px solid #e3e3e3;
+}
+
+#dpi{
+    display: none;
+}
+
+.scores{
+    font-size: 1.5em;
+};
+
+#game-col{
+    padding: 0px; 
+}
+
+.control-button{
+    text-align: center;
+    font-size: 50px;
+    cursor: pointer;
+}
+
+#left-button{
+    border-right: 1px solid #e3e3e3;
+}
