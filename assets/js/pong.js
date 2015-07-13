@@ -38,12 +38,6 @@ var winningScore = 7;
 var playerScoreField = document.getElementById('player-score');
 var computerScoreField = document.getElementById('computer-score');
 
-//Print dpi to screen
-
-var dpiText = document.createTextNode(dpi);
-var dpiElement = document.getElementById('dpi');
-dpiElement.appendChild(dpiText);
-
 //Creating Canvas
 
 var canvas = document.createElement('canvas');
