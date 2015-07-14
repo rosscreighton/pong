@@ -1,4 +1,4 @@
-//Global Variables
+// Global Variables
 
 var windowHeight = window.innerHeight;
 var gameContainerWidth = document.getElementById('game-col').clientWidth;
@@ -22,6 +22,15 @@ var ballStartPositionX = width / 2;
 var ballStartPositionY = height / 2;
 var ballStartSpeed = 0;
 var dpi = window.devicePixelRatio;
+var playerScoreField = document.getElementById('player-score');
+var computerScoreField = document.getElementById('computer-score');
+var winningScore = 7;
+var computerMaxSpeed;
+var canvas;
+var context;
+var keysDown = {};
+var leftButtonPressed = false;
+var rightButtonPressed = false;
 
 // adjust button height
 leftButton.setAttribute('style', 'height:' + buttonHeight + 'px');
@@ -38,20 +47,17 @@ if (dpi <= 1) {
   playerSpeed = 9;
 };
 
-var computerMaxSpeed = playerSpeed + 1;
-var winningScore = 7;
-var playerScoreField = document.getElementById('player-score');
-var computerScoreField = document.getElementById('computer-score');
+computerMaxSpeed = playerSpeed + 1;
 
-//Creating Canvas
+// Creating the canvas
 
-var canvas = document.createElement('canvas');
+canvas = document.createElement('canvas');
 
 canvas.width = width;
 canvas.height = height;
-var context = canvas.getContext('2d');
+context = canvas.getContext('2d');
 
-//Add canvas to page
+// Add canvas to page
 
 window.onload = function() {
   var gameCol = document.getElementById('game-col');
@@ -59,9 +65,7 @@ window.onload = function() {
   animate(step);
 };
 
-//Storing Key Presses
-
-var keysDown = {};
+// Storing Key Presses
 
 window.addEventListener("keydown", function(event) {
   keysDown[event.keyCode] = true;
@@ -71,23 +75,22 @@ window.addEventListener("keyup", function(event) {
   delete keysDown[event.keyCode];
 });
 
-//Storing control button presses
+// Storing control button presses
 
-var leftButtonPressed = false;
-var rightButtonPressed = false;
 var leftMouseDown = function() { //function to update leftButtonPressed
   leftButtonPressed = true;
 };
 var leftMouseUp = function() { //funciton to update leftButtonPressed
   leftButtonPressed = false;
 };
-var rightMouseDown = function() { //function to update leftButtonPressed
+var rightMouseDown = function() { //function to update righButtonPressed
   rightButtonPressed = true;
 };
-var rightMouseUp = function() { //funciton to update leftButtonPressed
+var rightMouseUp = function() { //funciton to update rightButtonPressed
   rightButtonPressed = false;
 };
-//Event listeners to see if left button is pressed
+
+// Event listeners to see if left button is pressed
 leftButton.addEventListener('mousedown', leftMouseDown, false);
 leftButton.addEventListener('mouseup', leftMouseUp, false);
 leftButton.addEventListener('touchstart', leftMouseDown, false);
@@ -97,7 +100,7 @@ rightButton.addEventListener('mouseup', rightMouseUp, false);
 rightButton.addEventListener('touchstart', rightMouseDown, false);
 rightButton.addEventListener('touchend', rightMouseUp, false);
 
-//Keeping Score
+// Keeping Score
 
 var resetScores = function() {
   computer.score = 0;
@@ -117,7 +120,7 @@ var score = function() {
   };
 };
 
-//Reset position after someone scores
+// Reset position after someone scores
 
 var resetPosition = function() {
   ball.x = ballStartPositionX;
@@ -126,9 +129,11 @@ var resetPosition = function() {
   ball.y_speed = ballStartSpeed;
   computer.paddle.x = computerStartPositionX;
   player.paddle.x = playerStartPositionX;
+  leftButtonPressed = false;
+  rightButtonPressed = false;
 };
 
-//Paddle Constructor
+// Paddle Constructor
 
 function Paddle(x, y) {
   this.x = x;
@@ -139,14 +144,14 @@ function Paddle(x, y) {
   this.y_speed = 0;
 };
 
-//Render Method for paddles
+// Render Method for paddles
 
 Paddle.prototype.render = function() {
   context.fillStyle = "#000";
   context.fillRect(this.x, this.y, this.width, this.height);
 };
 
-//Move method for paddles
+// Move method for paddles
 
 Paddle.prototype.move = function(x, y) {
   this.x += x;
@@ -162,7 +167,7 @@ Paddle.prototype.move = function(x, y) {
   };
 };
 
-//Player constructor
+// Player constructor
 
 function Player() {
 
@@ -170,7 +175,7 @@ function Player() {
   this.score = 0;
 };
 
-//update score for player
+// update score for player
 
 Player.prototype.iScored = function() {
   this.score++;
@@ -180,7 +185,7 @@ Player.prototype.iScored = function() {
   playerScoreField.appendChild(playerScoreText);
 };
 
-//Update method for players
+// Update method for players
 
 Player.prototype.update = function() {
   for (var key in keysDown) {
@@ -203,20 +208,20 @@ Player.prototype.update = function() {
   };
 };
 
-//Render method for players
+// Render method for players
 
 Player.prototype.render = function() {
   this.paddle.render();
 };
 
-//computer constructor
+// computer constructor
 
 function Computer() {
   this.paddle = new Paddle(computerStartPositionX, computerStartPositionY);
   this.score = 0;
 };
 
-//update score for computer
+// update score for computer
 
 Computer.prototype.iScored = function() {
   this.score++;
@@ -226,7 +231,7 @@ Computer.prototype.iScored = function() {
   computerScoreField.appendChild(computerScoreText);
 };
 
-//update method for computers
+// update method for computers
 
 Computer.prototype.update = function(ball) {
   var x_pos = ball.x;
@@ -249,13 +254,13 @@ Computer.prototype.update = function(ball) {
   }
 };
 
-//Render method for computers
+// Render method for computers
 
 Computer.prototype.render = function() {
   this.paddle.render();
 };
 
-//Ball constructor
+// Ball constructor
 
 function Ball(x, y) {
   this.x = x;
@@ -265,7 +270,7 @@ function Ball(x, y) {
   this.radius = ballRadius;
 };
 
-//Update method for balls
+// Update method for balls
 
 Ball.prototype.update = function(paddle1, paddle2) {
   this.x += this.x_speed;
@@ -312,7 +317,7 @@ Ball.prototype.update = function(paddle1, paddle2) {
   };
 };
 
-//Render method for balls
+// Render method for balls
 
 Ball.prototype.render = function() {
   context.beginPath();
@@ -321,7 +326,7 @@ Ball.prototype.render = function() {
   context.fill();
 };
 
-//Update all objects for render
+// Update all objects for render
 
 var update = function() {
   player.update();
@@ -329,7 +334,7 @@ var update = function() {
   ball.update(player.paddle, computer.paddle);
 };
 
-//Render objects to canvas
+// Render objects to canvas
 
 var render = function() {
   context.fillStyle = "#fff";
@@ -339,7 +344,7 @@ var render = function() {
   ball.render();
 };
 
-//Call step 60 times per second
+// Call step 60 times per second
 
 var animate = window.requestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
@@ -348,7 +353,7 @@ var animate = window.requestAnimationFrame ||
     window.setTimeout(callback, 1000 / 60);
   };;
 
-//Loop through update, render, animate
+// Loop through update, render, animate
 
 var step = function() {
   score();
@@ -357,7 +362,7 @@ var step = function() {
   animate(step);
 };
 
-//Create the instances of each object and play the game
+// Create the instances of each object and play the game
 
 var player = new Player();
 var computer = new Computer();
