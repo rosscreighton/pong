@@ -1,61 +1,64 @@
-// Global Variables
+// setup game params
 
-var windowHeight = window.innerHeight;
-var gameContainerWidth = document.getElementById('game-col').clientWidth;
-var height = windowHeight * 0.8;
-var width = gameContainerWidth;
-var scoreboard = document.getElementById('scoreboard');
-var scoreboardHeight = scoreboard.clientHeight;
-var buttonHeight = windowHeight - scoreboardHeight - height;
-var leftButton = document.getElementById('left-button');
-var rightButton = document.getElementById('right-button');
-var paddleWidth = width / 8;
-var paddleHeight = paddleWidth / 7;
-var playerSpeed = 6;
-var paddleCenter = width / 2 - paddleWidth / 2;
-var computerStartPositionX = paddleCenter;
-var computerStartPositionY = 0;
-var playerStartPositionX = paddleCenter;
-var playerStartPositionY = height - paddleHeight;
-var ballRadius = paddleHeight / 1.5;
-var ballStartPositionX = width / 2;
-var ballStartPositionY = height / 2;
-var ballStartSpeed = 0;
-var dpi = window.devicePixelRatio;
-var playerScoreField = document.getElementById('player-score');
-var computerScoreField = document.getElementById('computer-score');
-var winningScore = 7;
-var computerMaxSpeed;
-var canvas;
-var context;
+var gameSetup = {
+  windowHeight: window.innerHeight,
+  gameContainerWidth: document.getElementById('game-col').clientWidth,
+  height: this.windowHeight * 0.8,
+  width: this.gameContainerWidth,
+  scoreboard: document.getElementById('scoreboard'),
+  scoreboardHeight: this.scoreboard.clientHeight,
+  buttonHeight: this.windowHeight - this.scoreboardHeight - this.height,
+  leftButton: document.getElementById('left-button'),
+  rightButton: document.getElementById('right-button'),
+  paddleWidth: this.width / 8,
+  paddleHeight: this.paddleWidth / 7,
+  playerSpeed: 6,
+  paddleCenter: this.width / 2 - this.paddleWidth / 2,
+  computerStartPositionX: this.paddleCenter,
+  computerStartPositionY: 0,
+  playerStartPositionX: this.paddleCenter,
+  playerStartPositionY: this.height - this.paddleHeight,
+  ballRadius: this.paddleHeight / 1.5,
+  ballStartPositionX: this.width / 2,
+  ballStartPositionY: this.height / 2,
+  ballStartSpeed: 0,
+  dpi: window.devicePixelRatio,
+  playerScoreField: document.getElementById('player-score'),
+  computerScoreField: document.getElementById('computer-score'),
+  winningScore: 7,
+  computerMaxSpeed: 7,
+  setGameSpeed: function(){
+    if (this.dpi <= 1) {
+      this.ballStartSpeed = 7;
+    } else if (this.dpi > 1 && this.dpi < 2) {
+      this.ballStartSpeed = 8;
+      this.playerSpeed = 8;
+    } else {
+      this.ballStartSpeed = 9;
+      this.playerSpeed = 9;
+    };
+
+    this.computerMaxSpeed = this.playerSpeed + 1;
+  },
+  setButtonHeight: function() {
+    this.leftButton.setAttribute('style', 'height:' + this.buttonHeight + 'px');
+    this.rightButton.setAttribute('style', 'height:' + this.buttonHeight + 'px');
+  }
+};
+
+gameSetup.setGameSpeed();
+
 var keysDown = {};
 var leftButtonPressed = false;
 var rightButtonPressed = false;
 
-// adjust button height
-leftButton.setAttribute('style', 'height:' + buttonHeight + 'px');
-rightButton.setAttribute('style', 'height:' + buttonHeight + 'px');
-
-// adjust game speed based on pixel ratio
-if (dpi <= 1) {
-  ballStartSpeed = 7;
-} else if (dpi > 1 && dpi < 2) {
-  ballStartSpeed = 8;
-  playerSpeed = 8;
-} else {
-  ballStartSpeed = 9;
-  playerSpeed = 9;
-};
-
-computerMaxSpeed = playerSpeed + 1;
-
 // Creating the canvas
 
-canvas = document.createElement('canvas');
+var canvas = document.createElement('canvas');
 
 canvas.width = width;
 canvas.height = height;
-context = canvas.getContext('2d');
+var context = canvas.getContext('2d');
 
 // Add canvas to page
 
