@@ -1,13 +1,14 @@
 // setup game params
-
-var gameSetup = {
+var gameDimensions = {
   windowHeight: window.innerHeight,
-  gameContainerWidth: document.getElementById('game-col').clientWidth,
-  height: this.windowHeight * 0.8,
-  width: this.gameContainerWidth,
+  gameContainerWidth: document.getElementById('game-col').clientWidth
+};
+var gameSetup = {
+  height: gameDimensions.windowHeight * 0.8,
+  width: gameDimensions.gameContainerWidth,
   scoreboard: document.getElementById('scoreboard'),
   scoreboardHeight: this.scoreboard.clientHeight,
-  buttonHeight: this.windowHeight - this.scoreboardHeight - this.height,
+  buttonHeight: gameDimensions.windowHeight - this.scoreboardHeight - this.height,
   leftButton: document.getElementById('left-button'),
   rightButton: document.getElementById('right-button'),
   paddleWidth: this.width / 8,
@@ -47,6 +48,7 @@ var gameSetup = {
 };
 
 gameSetup.setGameSpeed();
+gameSetup.setButtonHeight();
 
 var keysDown = {};
 var leftButtonPressed = false;
@@ -56,8 +58,8 @@ var rightButtonPressed = false;
 
 var canvas = document.createElement('canvas');
 
-canvas.width = width;
-canvas.height = height;
+canvas.width = gameSetup.width;
+canvas.height = gameSetup.height;
 var context = canvas.getContext('2d');
 
 // Add canvas to page
@@ -94,29 +96,29 @@ var rightMouseUp = function() { //funciton to update rightButtonPressed
 };
 
 // Event listeners to see if left button is pressed
-leftButton.addEventListener('mousedown', leftMouseDown, false);
-leftButton.addEventListener('mouseup', leftMouseUp, false);
-leftButton.addEventListener('touchstart', leftMouseDown, false);
-leftButton.addEventListener('touchend', leftMouseUp, false);
-rightButton.addEventListener('mousedown', rightMouseDown, false);
-rightButton.addEventListener('mouseup', rightMouseUp, false);
-rightButton.addEventListener('touchstart', rightMouseDown, false);
-rightButton.addEventListener('touchend', rightMouseUp, false);
+gameSetup.leftButton.addEventListener('mousedown', leftMouseDown, false);
+gameSetup.leftButton.addEventListener('mouseup', leftMouseUp, false);
+gameSetup.leftButton.addEventListener('touchstart', leftMouseDown, false);
+gameSetup.leftButton.addEventListener('touchend', leftMouseUp, false);
+gameSetup.rightButton.addEventListener('mousedown', rightMouseDown, false);
+gameSetup.rightButton.addEventListener('mouseup', rightMouseUp, false);
+gameSetup.rightButton.addEventListener('touchstart', rightMouseDown, false);
+gameSetup.rightButton.addEventListener('touchend', rightMouseUp, false);
 
 // Keeping Score
 
 var resetScores = function() {
   computer.score = 0;
   player.score = 0;
-  computerScoreField.innerHTML = '0';
-  playerScoreField.innerHTML = '0';
+  gameSetup.computerScoreField.innerHTML = '0';
+  gameSetup.playerScoreField.innerHTML = '0';
 };
 
 var score = function() {
-  if (computer.score >= winningScore || player.score >= winningScore) {
-    if (computer.score >= winningScore) {
+  if (computer.score >= gameSetup.winningScore || player.score >= gameSetup.winningScore) {
+    if (computer.score >= gameSetup.winningScore) {
       alert("Computer Won!");
-    } else if (player.score >= winningScore) {
+    } else if (player.score >= gameSetup.winningScore) {
       alert("You Won!");
     };
     resetScores();
@@ -126,12 +128,12 @@ var score = function() {
 // Reset position after someone scores
 
 var resetPosition = function() {
-  ball.x = ballStartPositionX;
-  ball.y = ballStartPositionY;
+  ball.x = gameSetup.ballStartPositionX;
+  ball.y = gameSetup.ballStartPositionY;
   ball.x_speed = 0;
-  ball.y_speed = ballStartSpeed;
-  computer.paddle.x = computerStartPositionX;
-  player.paddle.x = playerStartPositionX;
+  ball.y_speed = gameSetup.ballStartSpeed;
+  computer.paddle.x = gameSetup.computerStartPositionX;
+  player.paddle.x = gameSetup.playerStartPositionX;
   leftButtonPressed = false;
   rightButtonPressed = false;
 };
@@ -141,8 +143,8 @@ var resetPosition = function() {
 function Paddle(x, y) {
   this.x = x;
   this.y = y;
-  this.width = paddleWidth;
-  this.height = paddleHeight;
+  this.width = gameSetup.paddleWidth;
+  this.height = gameSetup.paddleHeight;
   this.x_speed = 0;
   this.y_speed = 0;
 };
@@ -174,7 +176,7 @@ Paddle.prototype.move = function(x, y) {
 
 function Player() {
 
-  this.paddle = new Paddle(playerStartPositionX, playerStartPositionY);
+  this.paddle = new Paddle(gameSetup.playerStartPositionX, gameSetup.playerStartPositionY);
   this.score = 0;
 };
 
@@ -184,8 +186,8 @@ Player.prototype.iScored = function() {
   this.score++;
   var playerScoreText = document.createTextNode(this.score);
 
-  playerScoreField.innerHTML = '';
-  playerScoreField.appendChild(playerScoreText);
+  gameSetup.playerScoreField.innerHTML = '';
+  gameSetup.playerScoreField.appendChild(playerScoreText);
 };
 
 // Update method for players
@@ -194,18 +196,18 @@ Player.prototype.update = function() {
   for (var key in keysDown) {
     var value = Number(key);
     if (value == 37) { // left arrow pressed
-      this.paddle.move(-playerSpeed, 0);
+      this.paddle.move(-gameSetup.playerSpeed, 0);
     } else if (value == 39) { // right arrow pressed
-      this.paddle.move(playerSpeed, 0);
+      this.paddle.move(gameSetup.playerSpeed, 0);
     } else {
       this.paddle.move(0, 0);
     };
   };
 
   if (leftButtonPressed) {
-    this.paddle.move(-playerSpeed, 0);
+    this.paddle.move(-gameSetup.playerSpeed, 0);
   } else if (rightButtonPressed) {
-    this.paddle.move(playerSpeed, 0);
+    this.paddle.move(gameSetup.playerSpeed, 0);
   } else {
 
   };
@@ -220,7 +222,7 @@ Player.prototype.render = function() {
 // computer constructor
 
 function Computer() {
-  this.paddle = new Paddle(computerStartPositionX, computerStartPositionY);
+  this.paddle = new Paddle(gameSetup.computerStartPositionX, gameSetup.computerStartPositionY);
   this.score = 0;
 };
 
@@ -230,8 +232,8 @@ Computer.prototype.iScored = function() {
   this.score++;
   var computerScoreText = document.createTextNode(this.score);
 
-  computerScoreField.innerHTML = '';
-  computerScoreField.appendChild(computerScoreText);
+  gameSetup.computerScoreField.innerHTML = '';
+  gameSetup.computerScoreField.appendChild(computerScoreText);
 };
 
 // update method for computers
@@ -240,20 +242,20 @@ Computer.prototype.update = function(ball) {
   var x_pos = ball.x;
   var diff = -((this.paddle.x + (this.paddle.width / 2)) - x_pos);
 
-  if (diff < 0 && diff < -(computerMaxSpeed - 1)) { // max speed left
-    diff = -computerMaxSpeed;
-  } else if (diff > 0 && diff > computerMaxSpeed - 1) { // max speed right
-    diff = computerMaxSpeed;
+  if (diff < 0 && diff < -(gameSetup.computerMaxSpeed - 1)) { // max speed left
+    diff = -gameSetup.computerMaxSpeed;
+  } else if (diff > 0 && diff > gameSetup.computerMaxSpeed - 1) { // max speed right
+    diff = gameSetup.computerMaxSpeed;
   }
 
-  if (ball.y < height / 3 || ball.y_speed <= 0) {
+  if (ball.y < gameSetup.height / 3 || ball.y_speed <= 0) {
     this.paddle.move(diff, 0);
   };
 
   if (this.paddle.x < 0) {
     this.paddle.x = 0;
-  } else if (this.paddle.x + this.paddle.width > width) {
-    this.paddle.x = width - this.paddle.width;
+  } else if (this.paddle.x + this.paddle.width > gameSetup.width) {
+    this.paddle.x = gameSetup.width - this.paddle.width;
   }
 };
 
@@ -269,8 +271,8 @@ function Ball(x, y) {
   this.x = x;
   this.y = y;
   this.x_speed = 0;
-  this.y_speed = ballStartSpeed;
-  this.radius = ballRadius;
+  this.y_speed = gameSetup.ballStartSpeed;
+  this.radius = gameSetup.ballRadius;
 };
 
 // Update method for balls
@@ -286,24 +288,24 @@ Ball.prototype.update = function(paddle1, paddle2) {
   if (this.x - this.radius < 0) { // hitting the left wall
     this.x = this.radius;
     this.x_speed = -this.x_speed;
-  } else if (this.x + this.radius > width) { // hitting the right wall
-    this.x = width - this.radius;
+  } else if (this.x + this.radius > gameSetup.width) { // hitting the right wall
+    this.x = gameSetup.width - this.radius;
     this.x_speed = -this.x_speed;
   };
 
-  if (this.y < 0 || this.y > height) { // a point was scored
+  if (this.y < 0 || this.y > gameSetup.height) { // a point was scored
     if (this.y < 0) { // player scored
       player.iScored();
     };
 
-    if (this.y > height) { // computer scored
+    if (this.y > gameSetup.height) { // computer scored
       computer.iScored();
     };
 
     resetPosition();
   };
 
-  if (top_y > height / 2) {
+  if (top_y > gameSetup.height / 2) {
     if (top_y < (paddle1.y + paddle1.height) && bottom_y > paddle1.y && top_x < (paddle1.x + paddle1.width) && bottom_x > paddle1.x) {
       // hit the player's paddle
       this.y_speed = -this.y_speed;
@@ -341,7 +343,7 @@ var update = function() {
 
 var render = function() {
   context.fillStyle = "#fff";
-  context.fillRect(0, 0, width, height);
+  context.fillRect(0, 0, gameSetup.width, gameSetup.height);
   player.render();
   computer.render();
   ball.render();
@@ -369,4 +371,4 @@ var step = function() {
 
 var player = new Player();
 var computer = new Computer();
-var ball = new Ball(ballStartPositionX, ballStartPositionY);
+var ball = new Ball(gameSetup.ballStartPositionX, gameSetup.ballStartPositionY);
